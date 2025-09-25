@@ -8,10 +8,6 @@ public class Main {
 
 	/* Crea e avvia un oggetto Client. */
 	public static void main(String[] args) {
-
-		// è direttamente l'application context che crea il client
-		// e gli inietta la dipendenza dal servizio (creandolo a sua volta, se
-		// necessario, nella catena di chiamate ai metodi)
 		Client client = ApplicationContext.getInstance().getClient();
 		client.run();
 	}

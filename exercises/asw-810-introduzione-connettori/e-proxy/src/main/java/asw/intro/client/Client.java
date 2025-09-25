@@ -2,7 +2,7 @@ package asw.intro.client;
 
 import asw.intro.service.Service;
 
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 /* Client del servizio. */
 public class Client {
@@ -11,12 +11,6 @@ public class Client {
 	private Logger logger = Logger.getLogger("asw.intro.client");
 
 	/* il servizio Service */
-	// mantiene un riferimento al servizio, che però viene "iniettato"
-	// dall'esterno, per
-	// - efficienza: una volta instaurata la dipendenza, il servizio può essere
-	// riutilizzato direttamente (ciò non avviene se si utilizza un metodo getService());
-	// - coerenza: il client lavora sempre con lo stesso servizio;
-	// - principio di Dependency Injection: il client dipende da un servizio, non da chi lo crea.
 	private Service service;
 
 	/* Crea un nuovo client. */
