@@ -20,6 +20,7 @@ public class ServiceServerUDPProxy {
         this.port = port;
     }
 
+    // in questo caso il server è di tipo "sequenziale"
     public void run() {
     	DatagramSocket socket = null;
         try {
@@ -75,7 +76,7 @@ public class ServiceServerUDPProxy {
             String reply = null;
             try {
                 String result = this.executeOperation(op, arg);
-                
+
                 /* se siamo qui, operazione completata, la risposta ha la forma "#risultato" */
                 reply = "#" + result;
     		} catch (ServiceException e) {

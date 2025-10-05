@@ -62,10 +62,22 @@ Contiene:
 ---
 
 ## 🌐 Protocollo di comunicazione (UDP)
-<img src="./protocollo-UDP.png" alt="Protocollo UDP" width="50%">
+<img src="./img/protocollo-UDP.png" alt="Protocollo UDP" width="50%">
+
+### 📡 Socket UDP
+UDP consente la trasmissione di datagrammi tra due processi
+- **comunicazione asincrona**
+- essendo un protocollo **non affidabile**, richiede una gestione esplicita
+- l’operazione `receive` non specifica il mittente (**receive from any**)
+- il **server** è di tipo **sequenziale** (un solo thread)
+- server con **servizio stateless** $\to$ non deve gestire lo stato della conversazione con i suoi client
+
+<p align="center">
+    <img src="./img/strutture-socketUDP.png" alt="Socket UDP strutture" width="60%">
+</p>
 
 ---
 
 ## 🗺️ Diagramma UML delle classi
 
-![Diagramma UML](./a-client-server-udp_UML.png)
+![Diagramma UML](./img/a-client-server-udp_UML.png)
