@@ -1,0 +1,6 @@
+include "service"
+include "service-impl"
+include "server"
+include "client"
+
+//rootProject.name = 'client-server'

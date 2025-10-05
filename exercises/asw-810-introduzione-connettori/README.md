@@ -3,7 +3,7 @@ Si tratta di semplici esempi, che introducono l'uso dei connettori.
 
 ---
 
-## 📁 1. Struttura dei progetti
+## 📁 Struttura dei progetti
 In generale:
 - package `service` $\to$ definisce l'interfaccia `Service` del servizio
 - package `server`
