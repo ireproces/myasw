@@ -105,6 +105,7 @@ Architettura del server:
 <p align="center">
     <img src="./img/processi-thread.png" alt="Processo multithread" width="40%">
 </p>
+
 ---
 
 ## 🗺️ Diagramma UML delle classi
