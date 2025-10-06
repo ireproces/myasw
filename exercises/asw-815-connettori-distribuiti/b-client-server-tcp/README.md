@@ -5,7 +5,7 @@ L’obiettivo è mostrare la struttura modulare di un sistema distribuito e l’
 ---
 
 ## 📁 Struttura del progetto
-```a-client-server-udp
+```b-client-server-tcp
 ├── client/
 │   └── src/main/java/asw/socket/client/
 ├── server/
@@ -26,17 +26,17 @@ L’obiettivo è mostrare la struttura modulare di un sistema distribuito e l’
 
 Contiene:
 - `Client.java` $\to$ programma principale del client
-- `connector/ServiceClientTCPProxy.java` $\to$ connettore che invia richieste UDP al server e riceve le risposte
-- `context/ApplicationContext.java` $\to$ gestore dell’inizializzazione dei componenti
+- `connector/ServiceClientTCPProxy.java` $\to$ connettore che gestisce la comunicazione TCP con il server, apre una connessione tramite socket
+- `context/ApplicationContext.java` $\to$ gestore dell’inizializzazione dei componenti del client
 - `main/Main.java` $\to$ punto di ingresso per eseguire il client
 
 ### 💻 Package `server`
-**Componente di rete lato server**, gestisce richieste UDP ed invoca l'implementazione del servizio.
+**Componente di rete lato server**, gestisce richieste TCP ed invoca l'implementazione del servizio.
 
 Contiene:
-- `Server.java` $\to$ programma principale che avvia il server
-- `connector/ServiceServerTCPProxy.java` $\to$ connettore che riceve i pacchetti UDP, traduce la comunicazione di rete in chiamate al servizio Java locale, e risponde al client
-- `connector/ServerThread.java` $\to$
+- `Server.java` $\to$ programma principale che avvia il server, apre una `ServerSocket` sulla porta specificata e rimane in attesa di connessioni dai client
+- `connector/ServiceServerTCPProxy.java` $\to$ connettore che accetta le connessioni TCP, riceve le richieste dai client e gli assegna un thread
+- `connector/ServerThread.java` $\to$ thread dedicato alla gestione di una singola connessione TCP
 
 ### 🧠 Package `service`
 Queste classi vengono importate sia dal client che dal server. Servono per mantenere l’**indipendenza logica tra le due parti**, che condividono solo la definizione del servizio, non l’implementazione.
