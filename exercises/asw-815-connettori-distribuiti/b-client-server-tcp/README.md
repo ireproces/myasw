@@ -53,8 +53,6 @@ Implementazione del servizio lato server, incapsula la **logica applicativa vera
 Contiene:
 - `ServiceImpl.java` $\to$ implementazione effettiva dei metodi del servizio
 
----
-
 ## 🧱 Benefici di questa organizzazione
 ✅ **Modularità** – ogni parte ha un ruolo preciso\
 ✅ **Riutilizzabilità** – lo stesso servizio può essere usato con altri connettori\
