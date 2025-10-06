@@ -29,6 +29,16 @@ Una modalità di comunicazione comune nei sistemi distribuiti è quella **client
   <img src="./img/client-server.png" alt="Protocollo req-rep" width="40%">
 </p>
 
+Il **protocollo** adottato specifica il **formato e** la **semantica dei messaggi** scambiati tra client e server.\
+In particolare, definisce:
+- il formato del messaggio di **richiesta** $\to$ rappresenta l’**invocazione dell’operazione** e **include i parametri** attuali;
+- il formato del messaggio di **risposta** $\to$ rappresenta il **risultato dell’elaborazione**, oppure un’eccezione generata durante l’esecuzione.
+
+Per garantire la corretta comunicazione, entrambe le parti devono concordare sul formato dei messaggi.
+Ciascun lato è quindi responsabile delle operazioni di:
+- **marshalling** $\to$ codifica dei dati e dei parametri in un formato trasmissibile;
+- **unmarshalling** $\to$ decodifica dei dati ricevuti per ricostruire i valori originali.
+
 ---
 
 ## 🪝 Socket
