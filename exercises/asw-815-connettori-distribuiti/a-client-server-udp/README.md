@@ -68,12 +68,18 @@ Contiene:
 UDP consente la trasmissione di datagrammi tra due processi
 - **comunicazione asincrona**
 - essendo un protocollo **non affidabile**, richiede una gestione esplicita
+
+<p align="center">
+    <img src="./img/strutture-socketUDP.png" alt="Socket UDP strutture" width="60%">
+</p>
+
+Architettura del server:
 - l’operazione `receive` non specifica il mittente (**receive from any**)
 - il **server** è di tipo **sequenziale** (un solo thread)
 - server con **servizio stateless** $\to$ non deve gestire lo stato della conversazione con i suoi client
 
 <p align="center">
-    <img src="./img/strutture-socketUDP.png" alt="Socket UDP strutture" width="60%">
+    <img src="./img/sessione-client-sequenziale.png" alt="2 Client 1 Server" width="50%">
 </p>
 
 ---
