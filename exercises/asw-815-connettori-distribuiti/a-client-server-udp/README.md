@@ -28,7 +28,7 @@ a-client-server-udp
 Contiene:
 - `Client.java` $\to$ programma principale del client
 - `connector/ServiceClientUDPProxy.java` $\to$ connettore che invia richieste UDP al server e riceve le risposte
-- `context/ApplicationContext.java` $\to$ gestore dell’inizializzazione dei componenti
+- `context/ApplicationContext.java` $\to$ gestore dell’inizializzazione dei componenti del client
 - `main/Main.java` $\to$ punto di ingresso per eseguire il client
 
 ### 💻 Package `server`
