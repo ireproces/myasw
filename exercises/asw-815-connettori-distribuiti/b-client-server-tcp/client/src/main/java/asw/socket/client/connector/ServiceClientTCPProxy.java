@@ -3,6 +3,7 @@ package asw.socket.client.connector;
 import asw.socket.service.*;
 
 import java.net.*;    // per le socket
+import java.rmi.RemoteException;
 import java.io.*;     // per i flussi di I/O
 
 import java.util.logging.Logger;
@@ -34,10 +35,18 @@ public class ServiceClientTCPProxy implements Service {
 
     /* metodo di supporto per la comunicazione remota */
     private String doOperation(String op, String arg) throws ServiceException, RemoteException {
+
+		// rappresenta la risposta “pulita” del servizio, il valore effettivo ritornato
+		// dal metodo remoto ed estreatto dalla risposta ricevuta dal server
     	String result = null;
+
+		// è necessario poiché la comunicazione TCP è connection-oriented
     	Socket socket = null;
+
         try {
         	/* chiede una connessione al server */
+			// l'operazione e' bloccante (si attende three-way handshake), per garantire
+			// che il socket sia connesso prima di restituirlo
         	socket = new Socket(address, port);    // bloccante
             /* solleva IOException, se si verifica un errore di I/O nella creazione del socket */
 
@@ -86,19 +95,25 @@ public class ServiceClientTCPProxy implements Service {
         		/* risposta malformata, solleva una RemoteException */
         		throw new RemoteException("Malformed reply: " + reply);
         	}
+		
 		} catch (UnknownHostException e) {
+			// riguarda la fase di connessione
 			logger.info("Client Proxy: UnknownHostException: " + e.getMessage());
 			throw new RemoteException("UnknownHostException: " + e.getMessage());
 		} catch (EOFException e) {
+			// riguarda la fase di lettura/scrittura sullo stream
 			logger.info("Client Proxy: EOFException: " + e.getMessage());
 			throw new RemoteException("EOFException: " + e.getMessage());
 		} catch (IOException e) {
+			// eccezione generica di I/O
 			logger.info("Client Proxy: IOException: " + e.getMessage());
 			throw new RemoteException("IOException: " + e.getMessage());
+
 		} finally {
 			if (socket!=null)
 				try { socket.close(); }
 				catch (IOException e) {
+					// riguarda la fase di chiusura del socket
 					logger.info("Client Proxy: IOException: " + e.getMessage());
 					throw new RemoteException("IOException: " + e.getMessage());
 				}

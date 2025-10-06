@@ -25,15 +25,19 @@ public class ServiceServerTCPProxy {
         try {
             /* crea il server socket su cui ascoltare/ricevere richieste */
         	ServerSocket listenSocket = new ServerSocket(port);
+
             /* per il server, disabilita il timeout */
         	listenSocket.setSoTimeout(0);
+
             while (true) {
                 /* aspetta/accetta una richiesta - crea il relativa socket */
 				Socket clientSocket = listenSocket.accept();    // bloccante
+
 				/* la richiesta sara' gestita in un nuovo popup thread, separato: 
  				 * crea e avvia il nuovo thread */
 				ServerThread thread = new ServerThread(clientSocket, service);
-				thread.start(); 
+				thread.start();
+				
 				/* poi torna immediatamente ad aspettare la richiesta successiva */ 
             }
 		} catch (IOException e) {

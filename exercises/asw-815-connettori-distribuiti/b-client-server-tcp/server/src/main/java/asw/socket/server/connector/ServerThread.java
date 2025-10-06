@@ -7,6 +7,8 @@ import java.io.*;
 
 import java.util.logging.Logger;
 
+// implementa le funzionalità del server che eroga il servizio
+// per il client fornito dal ServiceServerTCPProxy
 public class ServerThread extends Thread {
 
 	/* logger */
@@ -25,9 +27,11 @@ public class ServerThread extends Thread {
 			this.clientSocket = clientSocket;
 			this.service = service;
 			this.serverThreadId = MAX_SERVER_THREAD_ID++;
+
 			/* potrebbero anche andare all'inizio del metodo run */ 
 			in = new DataInputStream(clientSocket.getInputStream());
 			out = new DataOutputStream(clientSocket.getOutputStream());
+
 		} catch (IOException e) {
 			logger.info("Server Proxy: IO Exception: " + e.getMessage());
 		}
@@ -70,10 +74,12 @@ public class ServerThread extends Thread {
     		/* invia la risposta */
     		logger.info("Server Proxy: connection [" + serverThreadId + "]: sending reply: " + reply);
 			out.writeUTF(reply);    // non bloccante
+
 		} catch (EOFException e) {
 			logger.info("Server Proxy: connection [" + serverThreadId + "]: EOFException: " + e.getMessage());
 		} catch (IOException e) {
 			logger.info("Server Proxy: connection [" + serverThreadId + "]: IOException: " + e.getMessage());
+			
 		} finally {
 			try {
 				clientSocket.close();

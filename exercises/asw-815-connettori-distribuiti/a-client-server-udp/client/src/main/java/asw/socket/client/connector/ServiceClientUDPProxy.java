@@ -4,7 +4,7 @@ import asw.socket.service.*;
 
 import java.io.IOException;
 import java.net.*;    // per le socket
-
+import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 /* Remote proxy lato client per il servizio Service. */
@@ -42,23 +42,26 @@ public class ServiceClientUDPProxy implements Service {
     private String doOperation(String op, String arg) throws ServiceException, RemoteException {
     	String result = null;
     	DatagramSocket socket = null;
+
         try {
         	/* crea il socket per gestire la comunicazione remota */
             socket = new DatagramSocket();
             /* solleva SocketException, se il socket non puo' essere aperto */
+
             /* imposta il timeout ad 1 secondo */
             socket.setSoTimeout(1000);
 
             /* crea un datagramma che codifica la richiesta di servizio e i relativi parametri */
             /* la richiesta ha la forma "operazione$parametro" */
             String request = op + "$" + arg;
-
 			/* per simulare una richiesta malformata */
 			// if (op.equals("beta") && arg.equals("Alfa")) {
 			// 	request = op + "!" + arg;
 			// }
 			
             byte[] requestMessage = request.getBytes();
+
+			// crea il datagramma di richiesta
             DatagramPacket requestPacket =
                  new DatagramPacket(requestMessage,
                                     requestMessage.length,
@@ -105,11 +108,14 @@ public class ServiceClientUDPProxy implements Service {
         	}
 
 		} catch (SocketException e) {
+			// riguarda la fase di creazione del socket
 			logger.info("Client Proxy: SocketException: " + e.getMessage());
 			throw new RemoteException("Socket Exception: " + e.getMessage());
 		} catch (IOException e) {
+			// eccezione generica di I/O
 			logger.info("Client Proxy: IOException: " + e.getMessage());
 			throw new RemoteException("IO Exception: " + e.getMessage());
+			
 		} finally {
 			if (socket!=null) {
 				socket.close();
