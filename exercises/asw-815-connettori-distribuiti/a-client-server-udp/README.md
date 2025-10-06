@@ -5,7 +5,8 @@ L’obiettivo è mostrare la struttura modulare di un sistema distribuito e l’
 ---
 
 ## 📁 Struttura del progetto
-```a-client-server-udp
+```
+a-client-server-udp
 ├── client/
 │   └── src/main/java/asw/socket/client/
 ├── server/
