@@ -13,7 +13,7 @@ public class CounterServiceServerTCPProxy {
 	/* logger */
 	private Logger logger = Logger.getLogger("asw.socket.server.connector");
 
-    private int port;                           // porta per il servizio
+    private int port; // porta per il servizio
 
 	public CounterServiceServerTCPProxy(int port) {
         this.port = port;

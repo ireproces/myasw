@@ -25,6 +25,8 @@ public class Client {
 	}
 
 	/* setta il servizio per il Client */
+	// dependency injection, l'oggetto RemoteCounterService è in realtà un
+	// instanza della classe ServiceClientTCPProxy
 	public void setService(RemoteCounterService service) {
 		this.service = service;
 	}

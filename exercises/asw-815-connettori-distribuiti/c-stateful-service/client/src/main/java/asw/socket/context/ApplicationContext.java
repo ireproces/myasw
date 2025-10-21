@@ -44,11 +44,19 @@ public class ApplicationContext {
 
     public synchronized RemoteCounterService getService(String serverHost) {
 		logger.info("ApplicationContext: getService(" + serverHost + ")");
+		
+		// il proxy è dichiarato come RemoteCounterService (interfaccia che
+		// estende le operazioni funzionali e quelle di gestione della connessione)
     	RemoteCounterService proxy = null;
+
     	try {
     		InetAddress address = InetAddress.getByName(serverHost);
     		int port = SERVER_PORT;
+
+			// il proxy viene istanziato come ServiceClientTCPProxy (classe
+			// che definisce le operazioni funzionali e quelle di gestione della connessione)
     		proxy = new ServiceClientTCPProxy(address, port);
+
     	} catch(Exception e) {
     		e.printStackTrace();
     	}

@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /* remote proxy lato client per il servizio */
+// implementazione concreta dell’interfaccia remota RemoteCounterService
 public class ServiceClientTCPProxy implements RemoteCounterService {
 
 	/* logger */
@@ -27,6 +28,7 @@ public class ServiceClientTCPProxy implements RemoteCounterService {
         this.port = port;
     }
 
+	// DEFINZIONE DELLE OPERAZIONI FUNZIONALI (contenute in CounterService):
 	/* incrementa il contatore */
     public void incrementCounter() throws RemoteException {
     	doOperation("incrementCounter");
@@ -42,10 +44,12 @@ public class ServiceClientTCPProxy implements RemoteCounterService {
     	return new Scanner( doOperation("getSessionCounter") ).nextInt();
     }
 
+	// DEFINZIONE DELLE OPERAZIONI DI CONNESSIONE (contenute in ConnectionOrientedService):
     /* avvia una nuova sessione */
     public void connect() throws RemoteException {
         try {
         	this.socket = new Socket(address, port);    // bloccante
+			// crea i canali di I/O
 			in = new DataInputStream(socket.getInputStream());
 			out = new DataOutputStream(socket.getOutputStream());
         	/* imposta il timeout (in ms) */
@@ -69,6 +73,8 @@ public class ServiceClientTCPProxy implements RemoteCounterService {
     }
 
     /* metodo di supporto per la comunicazione remota */
+	// cuore della comunicazione remota lato client: costruisce ed esegue
+	// tutte le operazioni richieste al servizio
     private String doOperation(String op) throws RemoteException {
     	String result = null;
         try {
@@ -86,13 +92,17 @@ public class ServiceClientTCPProxy implements RemoteCounterService {
 
             /* estrae la risposta, che in questo caso ha la forma "risultato" */
             result = reply;
+
 		} catch (UnknownHostException e) {
+			// errore indirizzo del server
 			logger.info("Server Proxy: UnknownHostException: " + e.getMessage());
 			throw new RemoteException("UnknownHostException: " + e.getMessage());
 		} catch (EOFException e) {
+			// errore di connessione
 			logger.info("Server Proxy: EOFException: " + e.getMessage());
 			throw new RemoteException("EOFException: " + e.getMessage());
 		} catch (IOException e) {
+			// errore generico di I/O
 			logger.info("Server Proxy: IOException: " + e.getMessage());
 			throw new RemoteException("IOException: " + e.getMessage());
 		}

@@ -5,6 +5,9 @@ package asw.socket.service;
  */
 public interface CounterService {
 
+    // dichiarazione delle OPERAZIONI FUNZIONALI del servizio
+    // vengono definite all'interno della classe ServiceClientTCPProxy
+
     public void incrementCounter() throws RemoteException;
 
 	public int getGlobalCounter() throws RemoteException;

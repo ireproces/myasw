@@ -7,6 +7,10 @@ import asw.socket.service.RemoteException;
  */
 public interface ConnectionOrientedService {
 
+	// dichiarazione delle OPERAZIONI DI CONTROLLO della CONNESSIONE (tipche
+	// dei servizi connection-oriented)
+	// la definizione avviene nella classe ServiceClientTCPProxy
+	
 	public void connect() throws RemoteException;
 
 	public void disconnect() throws RemoteException;
