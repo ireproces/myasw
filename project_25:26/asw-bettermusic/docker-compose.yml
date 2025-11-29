@@ -1,7 +1,0 @@
-name: bettermusic
-
-services:
-  consul:
-    image: docker.io/hashicorp/consul:latest
-    ports:
-      - "8500:8500"
