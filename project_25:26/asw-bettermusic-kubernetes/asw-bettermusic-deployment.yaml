@@ -1,0 +1,542 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asw
+---
+
+# ALBUM
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: asw
+  name: album
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: album
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: album
+    spec:
+      containers:
+        - name: album-container
+          image: dockercrozz/asw-bettermusic-album-kube
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "postgres"
+            #In un ambiente di produzione, queste credenziali andrebbero gestite tramite Kubernetes Secrets
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.kafka:9092"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 600
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: album
+spec:
+  selector:
+    app: bettermusic
+    service: album
+  type: NodePort 
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+# Database ALBUM
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: asw
+  name: album-db
+spec:
+  serviceName: album-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: album-db
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: album-db
+    spec:
+      containers:
+        - name: album-db-container
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: albumdb
+          ports:
+            - containerPort: 5432
+  # Rimosso il volumeClaimTemplates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: album-db
+spec:
+  selector:
+    app: bettermusic
+    service: album-db
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+# CONNESSIONI
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: asw
+  name: connessioni
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: connessioni
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: connessioni
+    spec:
+      containers:
+        - name: connessioni-container
+          image: dockercrozz/asw-bettermusic-connessioni-kube
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "postgres"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.kafka:9092"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 600
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: connessioni
+spec:
+  selector:
+    app: bettermusic
+    service: connessioni
+  type: NodePort 
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+# Database CONNESSIONI
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: asw
+  name: connessioni-db
+spec:
+  serviceName: connessioni-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: connessioni-db
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: connessioni-db
+    spec:
+      containers:
+        - name: connessioni-db-container
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: connessionidb
+          ports:
+            - containerPort: 5432
+  # Rimosso il volumeClaimTemplates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: connessioni-db
+spec:
+  selector:
+    app: bettermusic
+    service: connessioni-db
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+# RECENSIONI
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: asw
+  name: recensioni
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: recensioni
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: recensioni
+    spec:
+      containers:
+        - name: recensioni-container
+          image: dockercrozz/asw-bettermusic-recensioni-kube
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "postgres"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.kafka:9092"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 600
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: recensioni
+spec:
+  selector:
+    app: bettermusic
+    service: recensioni
+  type: NodePort 
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+# Database RECENSIONI
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: asw
+  name: recensioni-db
+spec:
+  serviceName: recensioni-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: recensioni-db
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: recensioni-db
+    spec:
+      containers:
+        - name: recensioni-db-container
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: recensionidb
+          ports:
+            - containerPort: 5432
+  # Rimosso il volumeClaimTemplates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: recensioni-db
+spec:
+  selector:
+    app: bettermusic
+    service: recensioni-db
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+# RECENSIONI-SEGUITE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: asw
+  name: recensioni-seguite
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: recensioni-seguite
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: recensioni-seguite
+    spec:
+      containers:
+        - name: recensioni-seguite-container
+          image: dockercrozz/asw-bettermusic-recensioni-seguite-kube
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://recensioni-seguite-db.asw.svc.cluster.local:5432/recensioni-seguitedb"
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "postgres"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.kafka:9092"
+            - name: SPRING_APPLICATION_JSON
+              value: '{"spring": {"cloud": {"discovery": {"client": {"simple": {"instances": {"album": [{"uri": "http://album:8080"}], "recensioni": [{"uri": "http://recensioni:8080"}], "connessioni": [{"uri": "http://connessioni:8080"}], "recensioni-seguite": [{"uri": "http://recensioni-seguite:8080"}]}}}}}}}'
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 600
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: recensioni-seguite
+spec:
+  selector:
+    app: bettermusic
+    service: recensioni-seguite
+  type: NodePort 
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+
+# Database RECENSIONI-SEGUITE
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: asw
+  name: recensioni-seguite-db
+spec:
+  serviceName: recensioni-seguite-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: recensioni-seguite-db
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: recensioni-seguite-db
+    spec:
+      containers:
+        - name: recensioni-seguite-db-container
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: recensioni-seguitedb
+          ports:
+            - containerPort: 5432
+  # Rimosso il volumeClaimTemplates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: recensioni-seguite-db
+spec:
+  selector:
+    app: bettermusic
+    service: recensioni-seguite-db
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+
+# API GATEWAY
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: asw
+  name: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bettermusic
+      service: api-gateway
+  template:
+    metadata:
+      labels:
+        app: bettermusic
+        service: api-gateway
+    spec:
+      containers:
+        - name: api-gateway-container
+          image: dockercrozz/asw-bettermusic-api-gateway-kube
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 600
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10         
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: asw
+  name: api-gateway
+spec:
+  selector:
+    app: bettermusic
+    service: api-gateway
+  type: NodePort 
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bettermusic-ing
+  namespace: asw
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Aggiunta per rimuovere il prefisso 
+spec:
+  ingressClassName: nginx  
+  rules:
+    - host: bettermusic.asw.io  
+      http:
+        paths:
+          - path: /  # Riguarda tutte le richieste
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway  # Servizio API Gateway
+                port:
+                  number: 8080  # Porta del servizio API Gateway
+
+---
+# SERVICE DISCOVERY
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  namespace: asw
+  name: service-discovery-reader
+rules:
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["pods", "services", "endpoints"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  namespace: asw
+  name: service-discovery-reader-binding
+subjects:
+  - kind: Group
+    name: system:serviceaccounts
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: service-discovery-reader
+  apiGroup: ""
