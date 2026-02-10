@@ -1,0 +1,55 @@
+# application.yml 
+--- 
+spring: 
+  application: 
+    name: recensioni-seguite
+  datasource:
+    url: jdbc:postgresql://recensioni-seguite-db:5432/recseguitedb
+    username: recseg
+    password: recseg
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: recensioni-seguite
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: asw.bettermusic.*
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      discovery: 
+        instanceId: ${spring.application.name}-${spring.cloud.client.hostname}-${random.value}
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 10s
+        # configurazione per effettuare esprimenti, NON USARE UN PRODUZIONE 
+        # dopo quanto tempo consul deve smettere di restituire servizi che non rispondono all'health check? 
+        healthCheckCriticalTimeout: 45s
+        # consul deve restituire solo servizi che passano l'health check (default=false) 
+        queryPassing: true 
+    loadbalancer: 
+      ribbon.enabled: false 
+
+server: 
+#  port: ${PORT:${SERVER_PORT:0}}
+  port: 8080
+  # per swagger, se dietro a un api gateway 
+  forward-headers-strategy: framework
+
+# fa il logging dei comandi sql eseguiti 
+#spring.jpa.show-sql: true
+# disable OSIV
+spring.jpa.open-in-view: false
+
+# ASW 
+asw: 
+  recensioniseguiteservice: 
+    implementation: RecensioniSeguiteServiceRestBasedImpl
+    # implementation: RecensioniSeguiteServiceKafkaBasedImpl
